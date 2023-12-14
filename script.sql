@@ -8,7 +8,7 @@ CREATE TABLE Division (
     id_division uuid not null PRIMARY KEY,
     name_organization VARCHAR(255),
     name_organization_division VARCHAR(255) UNIQUE,
-    FOREIGN KEY (name_organization) references Organizations (name_organization) on delete set null
+    FOREIGN KEY (name_organization) references Organizations (name_organization) on delete cascade
 );
 
 CREATE TABLE Firm (
@@ -31,7 +31,7 @@ CREATE TABLE Streets (
     id_street uuid not null PRIMARY KEY,
     street VARCHAR(255) UNIQUE,
     street_type VARCHAR(255),
-    FOREIGN KEY (id_street) references StreetTypes (id_type) on delete set null
+    FOREIGN KEY (street_type) references StreetTypes (type_street) on delete set null
 );
 
 
@@ -51,9 +51,9 @@ CREATE TABLE Addresses (
     id_address uuid not null PRIMARY KEY,
     house_number VARCHAR(255),
     street_name VARCHAR(255),
-    street_type_id uuid not null,
+    street_type VARCHAR(255),
     FOREIGN KEY (street_name) references Streets (street) on delete set null,
-    FOREIGN KEY (street_type_id) references Streets (id_street) on delete set null,
+    FOREIGN KEY (street_type) references StreetTypes (type_street) on delete set null,
     city_name VARCHAR(255),
     city_type VARCHAR(255),
     FOREIGN KEY (city_name) references Cities (city) on delete set null,
@@ -65,7 +65,7 @@ CREATE TABLE Seller (
     name_seller VARCHAR(255) not null UNIQUE,
     telephone_number VARCHAR(255) not null,
     site_name VARCHAR(255) not null,
-    seller_address_id uuid not null,
+    seller_address_id uuid,
     FOREIGN KEY (seller_address_id) references Addresses (id_address) on delete set null
 );
 
@@ -93,7 +93,7 @@ CREATE TABLE Computers (
     date_end DATE not null,
     document_number integer not null,
     document_date DATE not null,
-    software VARCHAR(255) ,
+    software VARCHAR(255),
     computer_division VARCHAR(255),
     FOREIGN KEY (computer_division) references Division (name_organization_division) on delete set null,
     FOREIGN KEY (software) references Software (software_name) on delete set null
