@@ -2,15 +2,13 @@ import sys
 
 from PySide2 import QtCore
 
-from db import Database
 from PySide2.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
 
+from database import db
 from form import Ui_MainWindow
-from widgets import StreetWidget
-from values import tables, tables_queries
-
-db = Database()
-db.connect()
+from widgets import StreetWidget, CityWidget, StreetTypeWidget, CityTypeWidget, AddressWidget, SoftwareWidget, \
+    OrganizationWidget, DivisionWidget, SellerWidget, PCWidget
+from values import tables, tables_queries, reports
 
 
 class MainWindow(QMainWindow):
@@ -27,32 +25,51 @@ class MainWindow(QMainWindow):
         self.ui.tables_comboBox.setStyleSheet(combobox_style)
         self.ui.reports_comboBox.setStyleSheet(combobox_style)
         self.ui.tables_comboBox.activated.connect(self.table_selecting)
-        self.ui.add_street_pushButton.clicked.connect(self.open_street_widget)
+        self.ui.add_street_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_city_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_type_street_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_type_city_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_address_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_software_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_organization_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_division_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_seller_pushButton.clicked.connect(self.open_widget)
+        self.ui.add_pc_pushButton.clicked.connect(self.open_widget)
+        self.ui.reports_comboBox.activated.connect(self.report_selecting)
         self.show()
 
-    def open_street_widget(self):
+    def open_widget(self):
         button_text = self.sender().text()
         if button_text == "Добавить улицу":
             new_widget = StreetWidget(self)
             new_widget.setWindowTitle('Добавить улицу')
         elif button_text == "Добавить тип улицы":
-            pass
+            new_widget = StreetTypeWidget(self)
+            new_widget.setWindowTitle('Добавить тип улицы')
         elif button_text == "Добавить нас. пункт":
-            pass
-        elif button_text == "Добавить тип нас. пункт":
-            pass
+            new_widget = CityWidget(self)
+            new_widget.setWindowTitle('Добавить нас. пункт')
+        elif button_text == "Добавить тип нас. пункта":
+            new_widget = CityTypeWidget(self)
+            new_widget.setWindowTitle('Добавить тип нас. пункта')
         elif button_text == "Добавить адрес":
-            pass
+            new_widget = AddressWidget(self)
+            new_widget.setWindowTitle('Добавить адрес')
         elif button_text == "Добавить ПО":
-            pass
+            new_widget = SoftwareWidget(self)
+            new_widget.setWindowTitle('Добавить ПО')
         elif button_text == "Добавить организацию":
-            pass
+            new_widget = OrganizationWidget(self)
+            new_widget.setWindowTitle('Добавить Организацию')
         elif button_text == "Добавить отдел":
-            pass
+            new_widget = DivisionWidget(self)
+            new_widget.setWindowTitle('Добавить Отдел')
         elif button_text == "Добавить продавца":
-            pass
+            new_widget = SellerWidget(self)
+            new_widget.setWindowTitle('Добавить Продавца')
         elif button_text == "Добавить компьютер":
-            pass
+            new_widget = PCWidget(self)
+            new_widget.setWindowTitle('Добавить Компьютер')
         # Делаем окно модальным и отображаем его
         new_widget.setModal(True)
         new_widget.exec_()
@@ -104,6 +121,13 @@ class MainWindow(QMainWindow):
         query = tables_queries[table]
         db.execute(query)
 
+        rows = db.cur.fetchall()
+        attributes = [desc[0] for desc in db.cur.description]
+        self.show_table(rows, attributes)
+
+    def report_selecting(self):
+        query = reports[self.ui.reports_comboBox.currentText()]
+        db.execute(query)
         rows = db.cur.fetchall()
         attributes = [desc[0] for desc in db.cur.description]
         self.show_table(rows, attributes)

@@ -73,3 +73,6 @@ WHERE CURRENT_DATE BETWEEN C.date_start AND C.date_end
 GROUP BY D.name_organization_division
 ORDER BY computer_count DESC;
 """
+
+db = Database()
+db.connect()

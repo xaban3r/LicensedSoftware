@@ -73,4 +73,34 @@ tables_queries = {
     """
 }
 
+reports = {
+    "Список подразделений с нелицензионным ПО":
+        """
+            SELECT DISTINCT D.name_organization_division
+            FROM Computers C
+            JOIN Division D ON C.computer_division = D.name_organization_division
+            JOIN Software S ON C.software = S.software_name
+            WHERE AGE(C.date_end, C.date_start) > S.validity_period;
+        """,
+    "Список ПО":
+        """
+            SELECT S.software_name, COUNT(*) AS license_count
+            FROM Computers C
+            JOIN Software S ON C.software = S.software_name
+            WHERE CURRENT_DATE <= C.date_end
+            GROUP BY S.software_name
+            ORDER BY license_count DESC;    
+        """,
+    "Список подразделений":
+        """
+            SELECT D.name_organization_division, COUNT(*) AS computer_count
+            FROM Computers C
+            JOIN Division D ON C.computer_division = D.name_organization_division
+            WHERE CURRENT_DATE BETWEEN C.date_start AND C.date_end
+            GROUP BY D.name_organization_division
+            ORDER BY computer_count DESC;
+        """
+}
+
+
 
